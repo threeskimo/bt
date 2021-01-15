@@ -14,6 +14,6 @@ bt [-c <device name>] [-d <device name>] [-l] [-i] [s <seconds>]
 	-d  Disconnect the currently connected bt device
 	-l  List all available bt devices
 	-i  Display paired bt device
-  -s  Scan for new bt devices
+	-s  Scan for new bt devices
 ```
 

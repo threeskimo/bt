@@ -4,7 +4,7 @@ A bash script to simplify connecting/disconnecting bluetooth devices, scanning f
 
 ## Why?
 
-Because I was tired of using bluetoothctl, hcitool, etc. and needed a simple script to take care of connecting my bt headphones/speaker to my laptop easily when they start getting finicky.
+Because I was tired of using bluetoothctl, hcitool, etc. and needed a simple script to take care of connecting my bluetooth headphones/speaker to my laptop easily when they start getting finicky.
 
 ## Usage
 

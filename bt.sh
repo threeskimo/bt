@@ -32,21 +32,34 @@ spinner() {
 	printf "\b "
 }
 
-# Echo usage if something isn't right
+# Echo usage to let user know how to use
 usage() { 
 	echo -e "Usage: bt [-c <device name>] [-d <device name>] [-l] [-i] [s <seconds>]"
-	echo -e "\t${BOLD}-c ${NOCOLOR}Connect to the specific bt device name"
-	echo -e "\t${BOLD}-d ${NOCOLOR}Disconnect the currently connected bt device"
-	echo -e "\t${BOLD}-l ${NOCOLOR}List all available bt devices"
-	echo -e "\t${BOLD}-i ${NOCOLOR}Display paired bt device"
-	echo -e "\t${BOLD}-s ${NOCOLOR}Scan for new bt devices"
+	echo -e "\t${BOLD}-c  ${NOCOLOR}Connect to the specific bt device"
+	echo -e "\t${BOLD}-d  ${NOCOLOR}Disconnect from the specific bt device"
+	echo -e "\t${BOLD}-l  ${NOCOLOR}List all available bt devices"
+	echo -e "\t${BOLD}-i  ${NOCOLOR}Display all paired bt devices"
+	echo -e "\t${BOLD}-s  ${NOCOLOR}Scan for new bt devices"
 	exit 1
+}
+
+# Determine bt device name/addr and check to see if valid
+setDeviceNameAndAddr() {
+	bt_addr=$(bluetoothctl devices | grep -iF ${arg1,,} | awk '{print $2}')
+	bt_name=$(bluetoothctl devices | grep -iF ${arg1,,} | cut -d' ' -f3-)
+	
+	# Check to see if device name is invalid
+	if [ -z "$bt_addr" ] ; then
+		echo "ERROR: Could not find valid device name"
+		usage
+		exit
+	fi
 }
 
 # Obtain options and their arguments
 while getopts ":c:d:s:lipt" o; do
 	case "${o}" in
-		c) # Connect bt devices
+		c) # Connect bt device
 			arg1=${OPTARG}
 			option="connect"
 			;;
@@ -54,7 +67,7 @@ while getopts ":c:d:s:lipt" o; do
 			arg1=${OPTARG}
 			option="disconnect"
 			;;
-		s) # Scan for bt devices for X seconds
+		s) # Scan for bt devices
 			arg1=${OPTARG}
 			option="scan"
 			;; 
@@ -63,23 +76,23 @@ while getopts ":c:d:s:lipt" o; do
 			bluetoothctl devices | cut -d' ' -f3-
 			exit
 			;;
-		i|p) # List currently connected bt device name
-			# Determine what devices are connected
+		i|p) # List currently paired bt devices
+			# Determine what devices are paired
 			connected=$(bluetoothctl paired-devices | cut -d' ' -f3-)
 			
-			# Display error if not connected to a bt device
+			# Display error if not paired to a bt device
 			if [ -z "$connected" ] ; then
-				echo "ERROR: No bt device currently connected"
+				echo "ERROR: No bt devices currently paired"
 				usage
 			else
-				# Display bt device info if device found
+				# Display bt device info if paired devices found
 				echo -e "Paired bt devices: "
 				echo -e "${YELLOW}$connected"
 			fi
 			exit
 			;;
-		t) # Test bt playback
-			echo -n "Testing bt device playback... " 
+		t) # Test bt audio playback
+			echo -n "Testing bt device audio playback... " 
 			aplay /usr/share/sounds/sound-icons/start &> /dev/null & spinner
 			echo "Test complete!"
 			exit
@@ -99,37 +112,23 @@ done
 if [ -z "${arg1,,}" ] ; then
 	usage
 fi
+
+# Determine what to do based on $option selected by user
 if [ $option = "connect" ]
 then
-	# Connect to the devices listed in the -c argument
-	device=$(bluetoothctl devices | grep -iF ${arg1,,} | awk '{print $2}')
-	deviceName=$(bluetoothctl devices | grep -iF ${arg1,,} | cut -d' ' -f3-)
-	
-	# Check to see if device name invalid
-	if [ -z "$device" ] ; then
-		echo "ERROR: Could not find valid device name"
-		usage
-		exit
-	fi
+	# Grab bt device name/addr to help connect to bt device stated in the -c argument
+	setDeviceNameAndAddr
 	
 	# Connect to bt device
-	echo -e "Connecting to ${YELLOW}$deviceName ${NOCOLOR}($device)..."
-	bluetoothctl connect $device
+	echo -e "Connecting to ${YELLOW}$bt_name ${NOCOLOR}($bt_addr)..."
+	bluetoothctl connect $bt_addr
 elif [ $option = "disconnect" ]
 then
-	# Connect to the devices listed in the -d argument
-	device=$(bluetoothctl devices | grep -iF ${arg1,,} | awk '{print $2}')
-	deviceName=$(bluetoothctl devices | grep -iF ${arg1,,} | cut -d' ' -f3-)
-
-	# Check to see if device name invalid
-	if [ -z "$device" ] ; then
-		echo "ERROR: Could not find valid device name"
-		usage
-		exit
-	fi
+	# Grab bt device name/addr to help connect to bt device stated in the -d argument
+	setDeviceNameAndAddr
 	
-	echo -e "Disconnecting from ${YELLOW}$deviceName ${NOCOLOR}($device)..."
-	bluetoothctl disconnect $device
+	echo -e "Disconnecting from ${YELLOW}$bt_name ${NOCOLOR}($bt_addr)..."
+	bluetoothctl disconnect $bt_addr
 	
 elif [ $option = "scan" ]
 then
@@ -151,9 +150,8 @@ then
 		usage
 		exit 1
 	fi
-	
-	
 else
+	# Catch-all for -c/-d
 	echo "ERROR: Could not find valid device name"
 	usage
 fi

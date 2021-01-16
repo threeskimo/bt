@@ -9,7 +9,7 @@ Because I was tired of using bluetoothctl, hcitool, etc. and needed a simple scr
 ## Usage
 
 ```
-bt [-c <device name>] [-d <device name>] [-l] [-i] [s <seconds>]
+bt [-c <device name>] [-d <device name>] [-l] [-i] [-s <seconds>]
 	-c  Connect to the specific bt device
 	-d  Disconnect from the specific bt device
 	-l  List all available bt devices

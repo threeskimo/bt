@@ -34,7 +34,7 @@ spinner() {
 
 # Echo usage to let user know how to use
 usage() { 
-	echo -e "Usage: bt [-c <device name>] [-d <device name>] [-l] [-i] [s <seconds>]"
+	echo -e "Usage: bt [-c <device name>] [-d <device name>] [-l] [-i] [-s <seconds>]"
 	echo -e "\t${BOLD}-c  ${NOCOLOR}Connect to the specific bt device"
 	echo -e "\t${BOLD}-d  ${NOCOLOR}Disconnect from the specific bt device"
 	echo -e "\t${BOLD}-l  ${NOCOLOR}List all available bt devices"

@@ -24,11 +24,13 @@ spinner() {
 	PID=$!
 	i=1
 	sp="/-\|"
+	setterm -cursor off
 	while [ -d /proc/$PID ]
 	do
 		printf "\b${sp:i++%${#sp}:1}"
 		sleep .25
 	done
+	setterm -cursor on
 	printf "\b "
 }
 

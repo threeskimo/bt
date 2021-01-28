@@ -19,6 +19,14 @@ LIGHTCYAN='\033[1;36m'
 WHITE='\033[1;37m'
 BOLD='\033[1m'
 
+# trap ctrl-c and call ctrl_c()
+trap ctrl_c INT
+
+# Resets cursor in case ctrl-c is called mid cursor off
+function ctrl_c() {
+        setterm -cursor on
+}
+ 
 # Used for long waits while longer commands execute
 spinner() {
 	PID=$!

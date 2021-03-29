@@ -1,6 +1,6 @@
 # bt.sh
 
-A bash script to simplify connecting/disconnecting bluetooth devices, scanning for bluetooth devices, seeing what bluetooth devices are paired, and seeing available non-paired devices to connect to.
+A shell script to simplify connecting/disconnecting bluetooth devices, scanning for bluetooth devices, seeing what bluetooth devices are paired, and seeing available non-paired devices to connect to.
 
 ## Why?
 
